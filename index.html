@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RedGlass | Open SRC Roblox UI Library</title>
+    <style>
+        :root {
+            --bg: #0c0c0c;
+            --sidebar: #111111;
+            --accent: #ff0000;
+            --text: #ededed;
+            --text-muted: #a1a1a1;
+            --code-bg: #161616;
+            --border: #222222;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            margin: 0;
+            display: flex;
+            line-height: 1.6;
+        }
+
+        nav {
+            width: 260px;
+            height: 100vh;
+            background: var(--sidebar);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        nav h1 { font-size: 1.2rem; color: var(--accent); margin-bottom: 30px; }
+        nav a { display: block; color: var(--text-muted); text-decoration: none; margin-bottom: 12px; font-size: 0.9rem; transition: 0.2s; }
+        nav a:hover { color: var(--accent); }
+
+        main { margin-left: 260px; padding: 60px 10%; width: 100%; box-sizing: border-box; }
+        h2 { border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-top: 40px; }
+        p { color: var(--text-muted); margin-bottom: 20px; }
+
+        pre {
+            background: var(--code-bg);
+            padding: 18px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            margin-bottom: 15px;
+        }
+
+        code { font-family: 'Fira Code', monospace; color: #d1d1d1; font-size: 0.9rem; }
+        .highlight { color: var(--accent); }
+
+        .preview-img {
+            width: 100%;
+            max-width: 650px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 30px;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            nav { display: none; }
+            main { margin-left: 0; padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <h1>RedGlass UI</h1>
+    <a href="#setup">Getting Started</a>
+    <a href="#tabs">Tabs</a>
+    <a href="#texts">Texts (Sections)</a>
+    <a href="#toggles">Toggles</a>
+    <a href="#buttons">Buttons</a>
+    <a href="#sliders">Sliders</a>
+    <a href="#dropdowns">Dropdowns</a>
+    <a href="#notifications">Notifications</a>
+</nav>
+
+<main>
+    <section id="setup">
+        <h2>Quick Start</h2>
+        <p>Load the library using the official loader URL.</p>
+        <pre><code>local RedGlass = loadstring(game:HttpGet("<span class="highlight">https://raw.githubusercontent.com/knoxexploits/Ui-Library/refs/heads/main/RedGalss</span>"))()
+
+local Window = RedGlass.new({
+    Name = "KnoxHub",
+    ConfigurationSaving = true
+})</code></pre>
+        <img src="https://i.ibb.co/hJxqV28X/Screenshot-2026-04-15-17-49-55-39-080032403b0f3d7ce099ec68649d222a.jpg" class="preview-img">
+    </section>
+
+    <section id="tabs">
+        <h2>Tabs</h2>
+        <p>Create navigation buttons in the sidebar.</p>
+        <pre><code>local MainTab = Window:CreateTab("Main")</code></pre>
+        <img src="https://i.ibb.co/dwB9rJX9/IMG-20260415-175100.jpg" class="preview-img">
+    </section>
+
+    <section id="texts">
+        <h2>Texts (Sections)</h2>
+        <p>Display headers or text labels inside your tabs.</p>
+        <pre><code>MainTab:CreateSection("This is a Section Label")</code></pre>
+        <img src="https://iili.io/BkStvY7.jpg" alt="BkStvY7.jpg" class="preview-img">
+    </section>
+
+    <section id="toggles">
+        <h2>Toggles</h2>
+        <p>Switch features on or off.</p>
+        <pre><code>MainTab:CreateToggle({
+    Name = "Auto Farm",
+    CurrentValue = false,
+    Flag = "farm",
+    Callback = function(v) print(v) end
+})</code></pre>
+        <img src="https://iili.io/BkURFLu.jpg" class="preview-img">
+    </section>
+
+    <section id="buttons">
+        <h2>Buttons</h2>
+        <p>Execute a one-time script action.</p>
+        <pre><code>MainTab:CreateButton("Instant Kill", function()
+    print("Action Executed")
+end)</code></pre>
+        <img src="https://iili.io/BkStvY7.jpg" alt="BkStvY7.jpg" class="preview-img">
+    </section>
+
+    <section id="sliders">
+        <h2>Sliders</h2>
+        <p>Adjust numerical values like Speed or Power.</p>
+        <pre><code>MainTab:CreateSlider({
+    Name = "WalkSpeed",
+    Min = 16, Max = 300, CurrentValue = 16,
+    Flag = "ws",
+    Callback = function(v) print(v) end
+})</code></pre>
+        <img src="https://iili.io/BkUl3hB.jpg" class="preview-img">
+    </section>
+
+    <section id="dropdowns">
+        <h2>Dropdowns</h2>
+        <p>Choose from a list of options.</p>
+        <pre><code>MainTab:CreateDropdown({
+    Name = "Select Zone",
+    Options = {"Spawn", "Desert", "PVP"},
+    Callback = function(v) print(v) end
+})</code></pre>
+        <img src="https://i.ibb.co/N2HsH2QB/IMG-20260415-175044.jpg" class="preview-img">
+    </section>
+
+    <section id="notifications">
+        <h2>Notifications</h2>
+        <p>Send a feedback message to the player.</p>
+        <pre><code>Window:Notify({
+    Title = "KnoxHub",
+    Content = "Library Loaded!",
+    Duration = 5
+})</code></pre>
+        <img src="https://iili.io/BkUBb07.jpg" class="preview-img">
+    </section>
+</main>
+
+</body>
+</html>
