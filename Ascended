@@ -55,15 +55,18 @@ function Ascended.new(cfg)
     Instance.new("UICorner", self.Main).CornerRadius = UDim.new(0, 10)
     Drag(self.Main)
     
-    -- === CHANGE 2: Angle Wing Background ===
+    -- === Angel Wing Background ===
     local WingBG = Instance.new("ImageLabel", self.Main)
     WingBG.Name = "AngelWings"
-    -- Make it big, covering most of the background area
     WingBG.Size = UDim2.new(0.9, 0, 0.9, 0)
     WingBG.Position = UDim2.new(0.05, 0, 0.1, 0)
     WingBG.BackgroundTransparency = 1
     WingBG.Image = "rbxassetid://90187914330043" -- User provided Image ID
-    WingBG.ImageTransparency = 0.8 -- Transparency for soft, heavenly look
+    
+    -- === ADJUSTMENT: Increased Visibility (Reduced Transparency) ===
+    -- Was 0.8 (faint), now 0.6 (clearly defined but still translucent).
+    WingBG.ImageTransparency = 0.6 
+    
     WingBG.ScaleType = Enum.ScaleType.Fit -- Keeps ratio without stretching
     WingBG.ZIndex = 0
 
@@ -149,7 +152,7 @@ function Ascended:CreateTab(n)
         local b = Instance.new("Frame", fr); b.Size = UDim2.new(1, -30, 0, 4); b.Position = UDim2.new(0, 15, 0, 32); b.BackgroundColor3 = Color3.fromRGB(220, 220, 220); Instance.new("UICorner", b).CornerRadius = UDim.new(1, 0)
         local fi = Instance.new("Frame", b); fi.Size = UDim2.new((v - c.Min) / (c.Max - c.Min), 0, 1, 0); fi.BackgroundColor3 = Ascended.Theme.Accent; Instance.new("UICorner", fi).CornerRadius = UDim.new(1, 0)
         
-        -- === CHANGE 1: Slider Dot Golden Color ===
+        -- === Slider Dot Golden Color ===
         local dot = Instance.new("Frame", fi)
         dot.Size = UDim2.new(0, 10, 0, 10)
         dot.Position = UDim2.new(1, -5, 0.5, -5)
