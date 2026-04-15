@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RedGlass | Roblox UI Library</title>
+    <style>
+        :root {
+            --bg: #0c0c0c;
+            --sidebar: #111111;
+            --accent: #ff0000;
+            --text: #ededed;
+            --text-muted: #a1a1a1;
+            --code-bg: #161616;
+            --border: #222222;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            margin: 0;
+            display: flex;
+            line-height: 1.6;
+        }
+
+        /* Sidebar Navigation */
+        nav {
+            width: 260px;
+            height: 100vh;
+            background: var(--sidebar);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        nav h1 {
+            font-size: 1.2rem;
+            color: var(--accent);
+            margin-bottom: 30px;
+        }
+
+        nav a {
+            display: block;
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+        }
+
+        /* Main Content */
+        main {
+            margin-left: 260px;
+            padding: 60px 10%;
+            width: 100%;
+        }
+
+        h2 { border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-top: 40px; }
+        p { color: var(--text-muted); margin-bottom: 20px; }
+
+        /* Code Blocks */
+        pre {
+            background: var(--code-bg);
+            padding: 18px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            position: relative;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            color: #d1d1d1;
+            font-size: 0.9rem;
+        }
+
+        .highlight { color: var(--accent); }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            nav { display: none; }
+            main { margin-left: 0; padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <h1>RedGlass UI</h1>
+    <a href="#setup">Getting Started</a>
+    <a href="#tabs">Tabs</a>
+    <a href="#toggles">Toggles</a>
+    <a href="#sliders">Sliders</a>
+    <a href="#dropdowns">Dropdowns</a>
+    <a href="#notifications">Notifications</a>
+</nav>
+
+<main>
+    <section id="setup">
+        <h2>Quick Start</h2>
+        <p>RedGlass is a dark-themed, glass-effect UI library designed for high performance on Roblox mobile and desktop.</p>
+        <pre><code>local RedGlass = loadstring(game:HttpGet("<span class="highlight">https://raw.githubusercontent.com/knoxexploits/Ui-Library/refs/heads/main/RedGalss</span>"))()
+
+local Window = RedGlass.new({
+    Name = "KnoxHub",
+    ConfigurationSaving = true
+})</code></pre>
+    </section>
+
+    <section id="tabs">
+        <h2>Tabs & Sections</h2>
+        <p>Organize your features into logical categories.</p>
+        <pre><code>local MainTab = Window:CreateTab("Main")
+MainTab:CreateSection("Combat Settings")</code></pre>
+    </section>
+
+    <section id="toggles">
+        <h2>Toggles</h2>
+        <p>The standard way to handle On/Off boolean states.</p>
+        <pre><code>MainTab:CreateToggle({
+    Name = "Auto Farm",
+    CurrentValue = false,
+    Flag = "farm_01",
+    Callback = function(val) print(val) end
+})</code></pre>
+    </section>
+
+    <section id="sliders">
+        <h2>Sliders</h2>
+        <p>Perfect for WalkSpeed, JumpPower, or FOV settings.</p>
+        <pre><code>MainTab:CreateSlider({
+    Name = "WalkSpeed",
+    Min = 16, Max = 300, CurrentValue = 16,
+    Flag = "ws_cfg",
+    Callback = function(v) print(v) end
+})</code></pre>
+    </section>
+
+    <section id="dropdowns">
+        <h2>Dropdowns</h2>
+        <p>Let users select a specific option from a table.</p>
+        <pre><code>MainTab:CreateDropdown({
+    Name = "Select Zone",
+    Options = {"Spawn", "Desert", "Volcano"},
+    Callback = function(opt) print(opt) end
+})</code></pre>
+    </section>
+
+    <section id="notifications">
+        <h2>Notifications</h2>
+        <p>Send a toast message to the bottom right of the screen.</p>
+        <pre><code>Window:Notify({
+    Title = "Loaded",
+    Content = "Script is ready!",
+    Duration = 5
+})</code></pre>
+    </section>
+</main>
+
+</body>
+</html>
