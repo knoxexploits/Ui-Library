@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RedGlass | Open Source UI Library</title>
+    <style>
+        :root {
+            --bg: #0c0c0c;
+            --sidebar: #111111;
+            --accent: #ff0000;
+            --text: #ededed;
+            --text-muted: #a1a1a1;
+            --code-bg: #161616;
+            --border: #222222;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            margin: 0;
+            display: flex;
+            line-height: 1.6;
+        }
+
+        nav {
+            width: 260px;
+            height: 100vh;
+            background: var(--sidebar);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        nav h1 { font-size: 1.1rem; color: var(--accent); margin-bottom: 5px; }
+        .sub-head { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 30px; display: block; }
+        nav a { display: block; color: var(--text-muted); text-decoration: none; margin-bottom: 12px; font-size: 0.9rem; transition: 0.2s; }
+        nav a:hover { color: var(--accent); }
+
+        main { margin-left: 260px; padding: 60px 10%; width: 100%; box-sizing: border-box; }
+        h2 { border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-top: 40px; }
+        p { color: var(--text-muted); margin-bottom: 20px; }
+
+        pre {
+            background: var(--code-bg);
+            padding: 18px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            margin-bottom: 15px;
+        }
+
+        code { font-family: 'Fira Code', monospace; color: #d1d1d1; font-size: 0.9rem; }
+        .highlight { color: var(--accent); }
+
+        .preview-img {
+            width: 100%;
+            max-width: 650px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 30px;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            nav { display: none; }
+            main { margin-left: 0; padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <h1>REDGLASS UI</h1>
+    <span class="sub-head">Open Source UI Library</span>
+    <a href="#setup">Getting Started</a>
+    <a href="#tabs">Tabs</a>
+    <a href="#texts">Texts</a>
+    <a href="#toggles">Toggles</a>
+    <a href="#buttons">Buttons</a>
+    <a href="#sliders">Sliders</a>
+    <a href="#dropdowns">Dropdowns</a>
+    <a href="#full-example">Full Code Sample</a>
+</nav>
+
+<main>
+    <section id="setup">
+        <h2>Open SRC|| Quick Start</h2>
+        <p>Use this loader to get started with RedGlass.</p>
+        <pre><code>local RedGlass = loadstring(game:HttpGet("<span class="highlight">https://raw.githubusercontent.com/knoxexploits/Ui-Library/refs/heads/main/RedGalss</span>"))()
+
+local Window = RedGlass.new({
+    Name = "KnoxHub",
+    ConfigurationSaving = true
+})</code></pre>
+        <img src="https://i.ibb.co/hJxqV28X/Screenshot-2026-04-15-17-49-55-39-080032403b0f3d7ce099ec68649d222a.jpg" class="preview-img">
+    </section>
+
+    <section id="tabs">
+        <h2>Tabs</h2>
+        <pre><code>local MainTab = Window:CreateTab("Main")</code></pre>
+        <img src="https://i.ibb.co/dwB9rJX9/IMG-20260415-175100.jpg" class="preview-img">
+    </section>
+
+    <section id="texts">
+        <h2>Texts (Sections)</h2>
+        <pre><code>MainTab:CreateSection("Example Header")</code></pre>
+        <img src="https://i.ibb.co/0RvbJTFD/IMG-20260415-175138.jpg" class="preview-img">
+    </section>
+
+    <section id="toggles">
+        <h2>Toggles</h2>
+        <pre><code>MainTab:CreateToggle({
+    Name = "Auto Farm",
+    CurrentValue = false,
+    Flag = "farm",
+    Callback = function(v) print("Status:", v) end
+})</code></pre>
+        <img src="https://i.ibb.co/0jkW2yzT/IMG-20260415-175114.jpg" class="preview-img">
+    </section>
+
+    <section id="buttons">
+        <h2>Buttons</h2>
+        <pre><code>MainTab:CreateButton("Click Me", function() print("Clicked") end)</code></pre>
+        <img src="https://i.ibb.co/0RvbJTFD/IMG-20260415-175138.jpg" class="preview-img">
+    </section>
+
+    <section id="sliders">
+        <h2>Sliders</h2>
+        <pre><code>MainTab:CreateSlider({
+    Name = "WalkSpeed",
+    Min = 16, Max = 300, CurrentValue = 16,
+    Flag = "ws",
+    Callback = function(v) print("New Value:", v) end
+})</code></pre>
+        <img src="https://i.ibb.co/1FFdTwn/IMG-20260415-175253.jpg" class="preview-img">
+    </section>
+
+    <section id="dropdowns">
+        <h2>Dropdowns</h2>
+        <pre><code>MainTab:CreateDropdown({
+    Name = "Teleport",
+    Options = {"Home", "Shop", "Safezone"},
+    Callback = function(v) print("Chosen:", v) end
+})</code></pre>
+        <img src="https://i.ibb.co/N2HsH2QB/IMG-20260415-175044.jpg" class="preview-img">
+    </section>
+
+    <section id="full-example">
+        <h2>Full Code Sample</h2>
+        <p>This is a complete script showing how to build a real hub. It includes variable-based logic for speed and a clean layout.</p>
+        <pre><code>local RedGlass = loadstring(game:HttpGet("https://raw.githubusercontent.com/knoxexploits/Ui-Library/refs/heads/main/RedGalss"))()
+
+local Window = RedGlass.new({
+    Name = "RedGlass Demo",
+    ConfigurationSaving = true
+})
+
+-- Script Variables
+local LP = game:GetService("Players").LocalPlayer
+local SpeedVal = 16
+
+-- Tabs
+local Main = Window:CreateTab("Main")
+local Misc = Window:CreateTab("Misc")
+
+-- Main Tab Components
+Main:CreateSection("Character Tweaks")
+
+Main:CreateToggle({
+    Name = "Enable Speed",
+    CurrentValue = false,
+    Flag = "speed_enabled",
+    Callback = function(v)
+        _G.SpeedEnabled = v
+        while _G.SpeedEnabled do task.wait()
+            if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+                LP.Character.Humanoid.WalkSpeed = SpeedVal
+            end
+        end
+    end
+})
+
+Main:CreateSlider({
+    Name = "Speed Amount",
+    Min = 16, Max = 250, CurrentValue = 16,
+    Flag = "speed_val",
+    Callback = function(v)
+        SpeedVal = v
+    end
+})
+
+-- Misc Tab Components
+Misc:CreateSection("Teleportation")
+
+Misc:CreateDropdown({
+    Name = "Waypoints",
+    Options = {"Spawn", "VIP Room", "Arena"},
+    Callback = function(opt)
+        Window:Notify({Title = "Teleport", Content = "Moving to " .. opt, Duration = 3})
+    end
+})
+
+Misc:CreateButton("Destroy UI", function()
+    Window.ScreenGui:Destroy()
+end)
+
+Window:Notify({
+    Title = "Ready",
+    Content = "Script is fully loaded!",
+    Duration = 5
+})</code></pre>
+    </section>
+</main>
+
+</body>
+</html>
