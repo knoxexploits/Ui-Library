@@ -61,11 +61,10 @@ function Ascended.new(cfg)
     WingBG.Size = UDim2.new(0.9, 0, 0.9, 0)
     WingBG.Position = UDim2.new(0.05, 0, 0.1, 0)
     WingBG.BackgroundTransparency = 1
-    WingBG.Image = "rbxassetid://90187914330043" -- User provided Image ID
-    
-    -- === ADJUSTMENT: Increased Visibility (Reduced Transparency) ===
-    -- Was 0.8 (faint), now 0.6 (clearly defined but still translucent).
-    WingBG.ImageTransparency = 0.6 
+    WingBG.Image = "rbxassetid://90187914330043"
+
+    -- here i saved the id niiidjdjdjjdjd
+    WingBG.ImageTransparency = 0.4 
     
     WingBG.ScaleType = Enum.ScaleType.Fit -- Keeps ratio without stretching
     WingBG.ZIndex = 0
