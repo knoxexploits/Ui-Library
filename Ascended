@@ -55,14 +55,16 @@ function Ascended.new(cfg)
     Instance.new("UICorner", self.Main).CornerRadius = UDim.new(0, 10)
     Drag(self.Main)
     
-    -- Angel Wing Background
+    -- === CHANGE 2: Angle Wing Background ===
     local WingBG = Instance.new("ImageLabel", self.Main)
     WingBG.Name = "AngelWings"
-    WingBG.Size = UDim2.new(0, 300, 0, 300)
-    WingBG.Position = UDim2.new(0.5, -150, 0.5, -130)
+    -- Make it big, covering most of the background area
+    WingBG.Size = UDim2.new(0.9, 0, 0.9, 0)
+    WingBG.Position = UDim2.new(0.05, 0, 0.1, 0)
     WingBG.BackgroundTransparency = 1
-    WingBG.Image = "rbxassetid://90187914330043"
-    WingBG.ImageTransparency = 0.85 -- Soft heavenly look
+    WingBG.Image = "rbxassetid://90187914330043" -- User provided Image ID
+    WingBG.ImageTransparency = 0.8 -- Transparency for soft, heavenly look
+    WingBG.ScaleType = Enum.ScaleType.Fit -- Keeps ratio without stretching
     WingBG.ZIndex = 0
 
     local s = Instance.new("UIStroke", self.Main)
@@ -146,9 +148,28 @@ function Ascended:CreateTab(n)
         local t = Instance.new("TextLabel", fr); t.Size = UDim2.new(1, -20, 0, 20); t.Position = UDim2.new(0, 10, 0, 5); t.BackgroundTransparency = 1; t.Text = c.Name .. " : " .. v; t.TextColor3 = Ascended.Theme.Text; t.Font = 4; t.TextSize = 12; t.TextXAlignment = 0
         local b = Instance.new("Frame", fr); b.Size = UDim2.new(1, -30, 0, 4); b.Position = UDim2.new(0, 15, 0, 32); b.BackgroundColor3 = Color3.fromRGB(220, 220, 220); Instance.new("UICorner", b).CornerRadius = UDim.new(1, 0)
         local fi = Instance.new("Frame", b); fi.Size = UDim2.new((v - c.Min) / (c.Max - c.Min), 0, 1, 0); fi.BackgroundColor3 = Ascended.Theme.Accent; Instance.new("UICorner", fi).CornerRadius = UDim.new(1, 0)
+        
+        -- === CHANGE 1: Slider Dot Golden Color ===
+        local dot = Instance.new("Frame", fi)
+        dot.Size = UDim2.new(0, 10, 0, 10)
+        dot.Position = UDim2.new(1, -5, 0.5, -5)
+        dot.BackgroundColor3 = Ascended.Theme.Accent -- Set to Divine Gold
+        dot.ZIndex = 2
+        Instance.new("UICorner", dot).CornerRadius = UDim.new(1, 0)
+        
         if Ascended.Flags[fl] then task.spawn(function() c.Callback(v) end) end
         local function up() local m = UIS:GetMouseLocation().X; local p = math.clamp((m - b.AbsolutePosition.X) / b.AbsoluteSize.X, 0, 1); local val = math.floor(c.Min + (c.Max - c.Min) * p); v = val; Ascended.Flags[fl] = v; t.Text = c.Name .. " : " .. v; fi.Size = UDim2.new(p, 0, 1, 0); c.Callback(v); self.Lib:Save() end
         b.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then local co; co = UIS.InputChanged:Connect(function(mv) if mv.UserInputType == Enum.UserInputType.MouseMovement or mv.UserInputType == Enum.UserInputType.Touch then up() end end); UIS.InputEnded:Connect(function(e) if e.UserInputType == Enum.UserInputType.MouseButton1 or e.UserInputType == Enum.UserInputType.Touch then if co then co:Disconnect() end end end); up() end end)
+    end
+
+    function f:CreateDropdown(c)
+        local fr = Instance.new("Frame", pg); fr.Size = UDim2.new(1, -10, 0, 38); fr.BackgroundColor3 = Color3.fromRGB(245, 245, 245); fr.ClipsDescendants = true; Instance.new("UICorner", fr).CornerRadius = UDim.new(0, 6)
+        local bt = Instance.new("TextButton", fr); bt.Size = UDim2.new(1, 0, 0, 38); bt.BackgroundTransparency = 1; bt.Text = "  " .. c.Name .. " : Select"; bt.TextColor3 = Ascended.Theme.Text; bt.Font = 4; bt.TextXAlignment = 0; local open = false
+        bt.MouseButton1Click:Connect(function() open = not open; Tween(fr, {Size = UDim2.new(1, -10, 0, open and (40 + (#c.Options * 30)) or 38)}, 0.3) end)
+        for i, o in pairs(c.Options) do
+            local opt = Instance.new("TextButton", fr); opt.Size = UDim2.new(1, -10, 0, 25); opt.Position = UDim2.new(0, 5, 0, 40 + ((i - 1) * 28)); opt.BackgroundColor3 = Color3.fromRGB(235, 235, 235); opt.Text = o; opt.TextColor3 = Ascended.Theme.Text; Instance.new("UICorner", opt).CornerRadius = UDim.new(0, 4)
+            opt.MouseButton1Click:Connect(function() bt.Text = "  " .. c.Name .. " : " .. o; open = false; Tween(fr, {Size = UDim2.new(1, -10, 0, 38)}, 0.3); c.Callback(o) end)
+        end
     end
 
     function f:CreateButton(n, cb)
