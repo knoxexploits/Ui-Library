@@ -1,0 +1,80 @@
+local RedGlass={Flags={},Theme={Main=Color3.fromRGB(12,12,12),Accent=Color3.fromRGB(255,0,0),Glass=0.2},Config={Enabled=false,FileName="KnoxConfig.json"}}
+RedGlass.__index=RedGlass
+local function gs(n)local s=game:GetService(n)return (cloneref and cloneref(s)) or s end
+local UIS,TS,CG,HS=gs("UserInputService"),gs("TweenService"),gs("CoreGui"),gs("HttpService")
+local function Tween(o,p,t,s)local tw=TS:Create(o,TweenInfo.new(t or 0.3,s or Enum.EasingStyle.Quart,Enum.EasingDirection.Out),p)tw:Play()return tw end
+
+local function Drag(obj)
+    local d,di,ds,sp;obj.InputBegan:Connect(function(i)if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then d=true;ds=i.Position;sp=obj.Position;i.Changed:Connect(function()if i.UserInputState==Enum.UserInputState.End then d=false end end)end end)
+    obj.InputChanged:Connect(function(i)if i.UserInputType==Enum.UserInputType.MouseMovement or i.UserInputType==Enum.UserInputType.Touch then di=i end end)
+    UIS.InputChanged:Connect(function(i)if i==di and d then local dl=i.Position-ds;obj.Position=UDim2.new(sp.X.Scale,sp.X.Offset+dl.X,sp.Y.Scale,sp.Y.Offset+dl.Y)end end)
+end
+
+function RedGlass:Notify(c)
+    local nH=self.ScreenGui:FindFirstChild("NH")or Instance.new("Frame",self.ScreenGui);nH.Name="NH";nH.Size=UDim2.new(0,250,1,0);nH.Position=UDim2.new(1,-260,0,-10);nH.BackgroundTransparency=1
+    local l=nH:FindFirstChild("L")or Instance.new("UIListLayout",nH);l.VerticalAlignment=2;l.Padding=UDim.new(0,10)
+    local n=Instance.new("Frame",nH);n.Size=UDim2.new(1,0,0,60);n.BackgroundColor3=RedGlass.Theme.Main;n.BackgroundTransparency=0.1;Instance.new("UICorner",n).CornerRadius=UDim.new(0,8)
+    local s=Instance.new("UIStroke",n);s.Color=RedGlass.Theme.Accent;s.Thickness=1.2
+    local t=Instance.new("TextLabel",n);t.Size=UDim2.new(1,-10,0,25);t.Position=UDim2.new(0,10,0,5);t.Text=c.Title;t.TextColor3=RedGlass.Theme.Accent;t.Font=4;t.BackgroundTransparency=1;t.TextXAlignment=0
+    local d=Instance.new("TextLabel",n);d.Size=UDim2.new(1,-10,0,25);d.Position=UDim2.new(0,10,0,25);d.Text=c.Content;d.TextColor3=Color3.new(1,1,1);d.Font=4;d.BackgroundTransparency=1;d.TextXAlignment=0
+    Tween(n,{Position=UDim2.new(0,0,0,0)},0.4);task.delay(c.Duration or 5,function()Tween(n,{Position=UDim2.new(1.5,0,0,0)},0.4).Completed:Wait();n:Destroy()end)
+end
+
+function RedGlass:Save() if not self.Config.Enabled then return end local s,r = pcall(function() writefile(self.Config.FileName, HS:JSONEncode(RedGlass.Flags)) end) end
+function RedGlass:Load() if not self.Config.Enabled or not isfile(self.Config.FileName) then return end local s,r = pcall(function() local d = HS:JSONDecode(readfile(self.Config.FileName)) for i,v in pairs(d) do RedGlass.Flags[i] = v end end) end
+
+function RedGlass.new(cfg)local self=setmetatable({},RedGlass)self.Name=cfg.Name or"RedGlass"
+self.Config.Enabled=cfg.ConfigurationSaving or false;self.Config.FileName=(cfg.Name or "Config")..".json";self:Load()
+self.ScreenGui=Instance.new("ScreenGui",(gethui and gethui()) or CG)self.ScreenGui.Name="RG_"..math.random(1e5)
+self.Main=Instance.new("Frame",self.ScreenGui)self.Main.Size=UDim2.new(0,480,0,310)self.Main.Position=UDim2.new(0.5,-240,0.5,-155)
+self.Main.BackgroundColor3=RedGlass.Theme.Main;self.Main.BackgroundTransparency=RedGlass.Theme.Glass;self.Main.ClipsDescendants=true;Instance.new("UICorner",self.Main).CornerRadius=UDim.new(0,8)
+Drag(self.Main)local s=Instance.new("UIStroke",self.Main)s.Color=RedGlass.Theme.Accent;s.Thickness=1.2;s.Transparency=0.4
+self.OpenBtn=Instance.new("TextButton",self.ScreenGui)self.OpenBtn.Size=UDim2.new(0,80,0,30)self.OpenBtn.Position=UDim2.new(0.5,-40,0,-50)
+self.OpenBtn.BackgroundColor3=Color3.fromRGB(15,15,15);self.OpenBtn.Text="OPEN";self.OpenBtn.TextColor3=RedGlass.Theme.Accent;self.OpenBtn.Font=4;self.OpenBtn.Visible=false;Instance.new("UICorner",self.OpenBtn).CornerRadius=UDim.new(0,6)
+local isM=false;local function Tgl()isM=not isM;if isM then Tween(self.Main,{Size=UDim2.new(0,0,0,0)},0.3).Completed:Connect(function()self.Main.Visible=false;self.OpenBtn.Visible=true;Tween(self.OpenBtn,{Position=UDim2.new(0.5,-40,0,20)},0.4,Enum.EasingStyle.Back)end)
+else self.Main.Visible=true;self.OpenBtn.Visible=false;self.OpenBtn.Position=UDim2.new(0.5,-40,0,-50)Tween(self.Main,{Size=UDim2.new(0,480,0,310)},0.4,Enum.EasingStyle.Back)end end
+self.OpenBtn.MouseButton1Click:Connect(Tgl)self.Sidebar=Instance.new("ScrollingFrame",self.Main)self.Sidebar.Size=UDim2.new(0,120,1,-50)self.Sidebar.Position=UDim2.new(0,10,0,40)
+self.Sidebar.BackgroundTransparency=1;self.Sidebar.ScrollBarThickness=0;Instance.new("UIListLayout",self.Sidebar).Padding=UDim.new(0,5)
+self.Container=Instance.new("Frame",self.Main)self.Container.Size=UDim2.new(1,-145,1,-50)self.Container.Position=UDim2.new(0,135,0,40)self.Container.BackgroundTransparency=1
+local t=Instance.new("TextLabel",self.Main)t.Size=UDim2.new(1,-20,0,35)t.Position=UDim2.new(0,12,0,0)t.BackgroundTransparency=1;t.Text=self.Name;t.TextColor3=Color3.new(1,1,1);t.Font=4;t.TextSize=14;t.TextXAlignment=0
+local mb=Instance.new("TextButton",self.Main)mb.Size=UDim2.new(0,25,0,25)mb.Position=UDim2.new(1,-30,0,5)mb.Text="_";mb.TextColor3=Color3.new(1,1,1);mb.BackgroundTransparency=1;mb.MouseButton1Click:Connect(Tgl)return self end
+
+function RedGlass:CreateTab(n)local b=Instance.new("TextButton",self.Sidebar)b.Size=UDim2.new(1,0,0,30)b.BackgroundColor3=Color3.new(1,1,1);b.BackgroundTransparency=1;b.Text=" "..n;b.TextColor3=Color3.fromRGB(150,150,150);b.Font=4;b.TextSize=13;b.TextXAlignment=0;Instance.new("UICorner",b).CornerRadius=UDim.new(0,6)
+local pg=Instance.new("ScrollingFrame",self.Container)pg.Size=UDim2.new(1,0,1,0)pg.BackgroundTransparency=1;pg.Visible=false;pg.ScrollBarThickness=0;Instance.new("UIListLayout",pg).Padding=UDim.new(0,8)
+b.MouseButton1Click:Connect(function()for _,v in pairs(self.Container:GetChildren())do if v:IsA("ScrollingFrame")then v.Visible=false end end
+for _,v in pairs(self.Sidebar:GetChildren())do if v:IsA("TextButton")then Tween(v,{BackgroundTransparency=1,TextColor3=Color3.fromRGB(150,150,150)},0.2)end end
+pg.Visible=true;Tween(b,{BackgroundTransparency=0.9,TextColor3=RedGlass.Theme.Accent},0.2)end)if #self.Sidebar:GetChildren()==2 then pg.Visible=true;Tween(b,{BackgroundTransparency=0.9,TextColor3=RedGlass.Theme.Accent},0.2)end
+local f={Lib=self}
+
+function f:CreateToggle(c)local fl=c.Flag or c.Name;local s=RedGlass.Flags[fl] or c.CurrentValue or false;RedGlass.Flags[fl]=s;local fr=Instance.new("TextButton",pg)
+fr.Size=UDim2.new(1,-10,0,38)fr.BackgroundColor3=Color3.fromRGB(20,20,20)fr.Text="  "..c.Name;fr.TextColor3=Color3.new(0.9,0.9,0.9);fr.Font=4;fr.TextSize=13;fr.TextXAlignment=0;fr.AutoButtonColor=false;Instance.new("UICorner",fr).CornerRadius=UDim.new(0,6)
+local sw=Instance.new("Frame",fr)sw.Size=UDim2.new(0,30,0,16)sw.Position=UDim2.new(1,-40,0.5,-8)sw.BackgroundColor3=s and RedGlass.Theme.Accent or Color3.fromRGB(40,40,40)Instance.new("UICorner",sw).CornerRadius=UDim.new(1,0)
+local d=Instance.new("Frame",sw)d.Size=UDim2.new(0,10,0,10)d.Position=s and UDim2.new(1,-12,0.5,-5)or UDim2.new(0,2,0.5,-5)d.BackgroundColor3=Color3.new(1,1,1)Instance.new("UICorner",d).CornerRadius=UDim.new(1,0)
+if s then task.spawn(function() c.Callback(true) end) end
+fr.MouseButton1Click:Connect(function()s=not s;RedGlass.Flags[fl]=s;Tween(sw,{BackgroundColor3=s and RedGlass.Theme.Accent or Color3.fromRGB(40,40,40)},0.2)Tween(d,{Position=s and UDim2.new(1,-12,0.5,-5)or UDim2.new(0,2,0.5,-5)},0.2)c.Callback(s)self.Lib:Save()end)end
+
+function f:CreateSlider(c)local fl=c.Flag or c.Name;local v=RedGlass.Flags[fl] or c.CurrentValue or c.Min;RedGlass.Flags[fl]=v;local fr=Instance.new("Frame",pg)fr.Size=UDim2.new(1,-10,0,45)fr.BackgroundColor3=Color3.fromRGB(20,20,20)Instance.new("UICorner",fr).CornerRadius=UDim.new(0,6)
+local t=Instance.new("TextLabel",fr)t.Size=UDim2.new(1,-20,0,20)t.Position=UDim2.new(0,10,0,5)t.BackgroundTransparency=1;t.Text=c.Name.." : "..v;t.TextColor3=Color3.new(1,1,1);t.Font=4;t.TextSize=12;t.TextXAlignment=0
+local b=Instance.new("Frame",fr)b.Size=UDim2.new(1,-30,0,4)b.Position=UDim2.new(0,15,0,32)b.BackgroundColor3=Color3.fromRGB(40,40,40)Instance.new("UICorner",b).CornerRadius=UDim.new(1,0)
+local fi=Instance.new("Frame",b)fi.Size=UDim2.new((v-c.Min)/(c.Max-c.Min),0,1,0)fi.BackgroundColor3=RedGlass.Theme.Accent;Instance.new("UICorner",fi).CornerRadius=UDim.new(1,0)
+local dot=Instance.new("Frame",fi)dot.Size=UDim2.new(0,10,0,10)dot.Position=UDim2.new(1,-5,0.5,-5)dot.BackgroundColor3=Color3.new(1,1,1)Instance.new("UICorner",dot).CornerRadius=UDim.new(1,0)
+if RedGlass.Flags[fl] then task.spawn(function() c.Callback(v) end) end
+local function up()local m=UIS:GetMouseLocation().X;local p=math.clamp((m-b.AbsolutePosition.X)/b.AbsoluteSize.X,0,1)local val=math.floor(c.Min+(c.Max-c.Min)*p)v=val;RedGlass.Flags[fl]=v;t.Text=c.Name.." : "..v;fi.Size=UDim2.new(p,0,1,0)c.Callback(v)self.Lib:Save()end
+b.InputBegan:Connect(function(i)if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then local co;co=UIS.InputChanged:Connect(function(mv)if mv.UserInputType==Enum.UserInputType.MouseMovement or mv.UserInputType==Enum.UserInputType.Touch then up()end end)UIS.InputEnded:Connect(function(e)if e.UserInputType==Enum.UserInputType.MouseButton1 or e.UserInputType==Enum.UserInputType.Touch then if co then co:Disconnect()end end end)up()end end)end
+
+function f:CreateDropdown(c)
+    local fr=Instance.new("Frame",pg);fr.Size=UDim2.new(1,-10,0,38);fr.BackgroundColor3=Color3.fromRGB(20,20,20);fr.ClipsDescendants=true;Instance.new("UICorner",fr).CornerRadius=UDim.new(0,6)
+    local bt=Instance.new("TextButton",fr);bt.Size=UDim2.new(1,0,0,38);bt.BackgroundTransparency=1;bt.Text="  "..c.Name.." : Select";bt.TextColor3=Color3.new(1,1,1);bt.Font=4;bt.TextXAlignment=0;local open=false
+    bt.MouseButton1Click:Connect(function()open=not open;Tween(fr,{Size=UDim2.new(1,-10,0,open and(40+(#c.Options*30))or 38)},0.3)end)
+    for i,o in pairs(c.Options)do
+        local opt=Instance.new("TextButton",fr);opt.Size=UDim2.new(1,-10,0,25);opt.Position=UDim2.new(0,5,0,40+((i-1)*28));opt.BackgroundColor3=Color3.fromRGB(15,15,15);opt.Text=o;opt.TextColor3=Color3.new(0.8,0.8,0.8);Instance.new("UICorner",opt).CornerRadius=UDim.new(0,4)
+        opt.MouseButton1Click:Connect(function()bt.Text="  "..c.Name.." : "..o;open=false;Tween(fr,{Size=UDim2.new(1,-10,0,38)},0.3);c.Callback(o)end)
+    end
+end
+
+function f:CreateButton(n,cb)local b=Instance.new("TextButton",pg)b.Size=UDim2.new(1,-10,0,38)b.BackgroundColor3=Color3.fromRGB(20,20,20)b.Text="  "..n;b.TextColor3=Color3.new(1,1,1);b.Font=4;b.TextSize=13;b.TextXAlignment=0;Instance.new("UICorner",b).CornerRadius=UDim.new(0,6)
+b.MouseButton1Click:Connect(function()Tween(b,{BackgroundColor3=RedGlass.Theme.Accent},0.1).Completed:Wait()Tween(b,{BackgroundColor3=Color3.fromRGB(20,20,20)},0.2)cb()end)end
+
+function f:CreateSection(n)local s=Instance.new("TextLabel",pg)s.Size=UDim2.new(1,0,0,20)s.BackgroundTransparency=1;s.Text=" "..n:upper();s.TextColor3=RedGlass.Theme.Accent;s.Font=Enum.Font.GothamBold;s.TextSize=11;s.TextXAlignment=0 end return f end
+
+return RedGlass
