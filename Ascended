@@ -58,7 +58,7 @@ function Ascended.new(cfg)
     WingBG.Size = UDim2.new(0.9, 0, 0.9, 0)
     WingBG.Position = UDim2.new(0.05, 0, 0.1, 0)
     WingBG.BackgroundTransparency = 1
-    WingBG.Image = "132669375046851"
+    WingBG.Image = "rbxassetid://132669375046851"
     WingBG.ImageTransparency = 0.4 
     WingBG.ScaleType = Enum.ScaleType.Fit
     WingBG.ZIndex = 0
