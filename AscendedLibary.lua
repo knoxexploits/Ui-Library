@@ -1,4 +1,4 @@
--- Ascended UI Library (Fixed)
+-- Ascended UI Library
 local Ascended = {
     Flags = {},
     Theme = {
