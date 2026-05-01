@@ -45,9 +45,12 @@ function Ascended.new(cfg)
     self.Config.Enabled = cfg.ConfigurationSaving or false; self.Config.FileName = (cfg.Name or "Config") .. ".json"; self:Load()
     self.ScreenGui = Instance.new("ScreenGui", (gethui and gethui()) or CG)
     self.ScreenGui.Name = "Ascended_" .. math.random(1e5)
+    local gW = (cfg.Size and cfg.Size.Width) or 480
+    local gH = (cfg.Size and cfg.Size.Height) or 310
+    self.GuiW = gW; self.GuiH = gH
     self.Main = Instance.new("Frame", self.ScreenGui)
-    self.Main.Size = UDim2.new(0, 480, 0, 310)
-    self.Main.Position = UDim2.new(0.5, -240, 0.5, -155)
+    self.Main.Size = UDim2.new(0, gW, 0, gH)
+    self.Main.Position = UDim2.new(0.5, -gW/2, 0.5, -gH/2)
     self.Main.BackgroundColor3 = Ascended.Theme.Main
     self.Main.BackgroundTransparency = Ascended.Theme.Glass
     self.Main.ClipsDescendants = true
@@ -68,12 +71,11 @@ function Ascended.new(cfg)
     -- IMAGE BUTTON shown when GUI is minimized (replaces old TextButton)
     self.OpenBtn = Instance.new("ImageButton", self.ScreenGui)
     self.OpenBtn.Size = UDim2.new(0, 60, 0, 60)
-    self.OpenBtn.Position = UDim2.new(0.5, -30, 0, -80)
+    self.OpenBtn.Position = UDim2.new(0.5, -60, 0, -80)
     self.OpenBtn.BackgroundTransparency = 1
     self.OpenBtn.Image = "rbxassetid://122419622598879"
     self.OpenBtn.ScaleType = Enum.ScaleType.Fit
     self.OpenBtn.Visible = false
-    Instance.new("UICorner", self.OpenBtn).CornerRadius = UDim.new(1, 0)
 
     local isM = false
     local function Tgl()
@@ -82,13 +84,13 @@ function Ascended.new(cfg)
             Tween(self.Main, {Size = UDim2.new(0, 0, 0, 0)}, 0.3).Completed:Connect(function()
                 self.Main.Visible = false
                 self.OpenBtn.Visible = true
-                Tween(self.OpenBtn, {Position = UDim2.new(0.5, -30, 0, 20)}, 0.4, Enum.EasingStyle.Back)
+                Tween(self.OpenBtn, {Position = UDim2.new(0.5, -60, 0, 20)}, 0.4, Enum.EasingStyle.Back)
             end)
         else 
             self.Main.Visible = true
             self.OpenBtn.Visible = false
-            self.OpenBtn.Position = UDim2.new(0.5, -30, 0, -80)
-            Tween(self.Main, {Size = UDim2.new(0, 480, 0, 310)}, 0.4, Enum.EasingStyle.Back)
+            self.OpenBtn.Position = UDim2.new(0.5, -60, 0, -80)
+            Tween(self.Main, {Size = UDim2.new(0, self.GuiW, 0, self.GuiH)}, 0.4, Enum.EasingStyle.Back)
         end 
     end
     self.OpenBtn.MouseButton1Click:Connect(Tgl)
@@ -108,8 +110,15 @@ function Ascended.new(cfg)
     local mb = Instance.new("TextButton", self.Main)
     mb.Size = UDim2.new(0, 30, 0, 30)
     mb.Position = UDim2.new(1, -35, 0, 8)
-    mb.Text = "×"; mb.TextSize = 20; mb.TextColor3 = Ascended.Theme.Accent; mb.BackgroundTransparency = 1; mb.MouseButton1Click:Connect(Tgl)
+    mb.Text = "Ã—"; mb.TextSize = 20; mb.TextColor3 = Ascended.Theme.Accent; mb.BackgroundTransparency = 1; mb.MouseButton1Click:Connect(Tgl)
     return self
+end
+
+function Ascended:SetSize(w, h)
+    self.GuiW = w or self.GuiW
+    self.GuiH = h or self.GuiH
+    self.Main.Size = UDim2.new(0, self.GuiW, 0, self.GuiH)
+    self.Main.Position = UDim2.new(0.5, -(self.GuiW / 2), 0.5, -(self.GuiH / 2))
 end
 
 function Ascended:CreateTab(n)
@@ -181,7 +190,11 @@ function Ascended:CreateTab(n)
         end)
     end
     function f:CreateDropdown(c)
-        -- The row that sits inside the tab list
+        local fl = c.Flag or c.Name
+        local selected = Ascended.Flags[fl] or c.CurrentValue or c.Options[1]
+        Ascended.Flags[fl] = selected
+
+        -- Header row (always visible inside the tab)
         local fr = Instance.new("Frame", pg)
         fr.Size = UDim2.new(1, -10, 0, 38)
         fr.BackgroundColor3 = Color3.fromRGB(245, 245, 245)
@@ -189,104 +202,39 @@ function Ascended:CreateTab(n)
 
         local bt = Instance.new("TextButton", fr)
         bt.Size = UDim2.new(1, 0, 1, 0); bt.BackgroundTransparency = 1
-        bt.Text = "  " .. c.Name .. " ▾"; bt.TextColor3 = Ascended.Theme.Text
+        bt.Text = "  " .. c.Name .. " : " .. selected .. " â–¾"
+        bt.TextColor3 = Ascended.Theme.Text
         bt.Font = Enum.Font.Gotham; bt.TextSize = 13; bt.TextXAlignment = Enum.TextXAlignment.Left
 
-        -- Floating popup panel parented to ScreenGui so it's never clipped
-        local panel = Instance.new("Frame", self.Lib.ScreenGui)
-        panel.Size = UDim2.new(0, 170, 0, 0)
-        panel.BackgroundColor3 = Color3.fromRGB(250, 250, 250)
-        panel.BackgroundTransparency = 0.05
-        panel.ClipsDescendants = true
-        panel.Visible = false
-        panel.ZIndex = 20
-        Instance.new("UICorner", panel).CornerRadius = UDim.new(0, 8)
-        local pStroke = Instance.new("UIStroke", panel)
-        pStroke.Color = Ascended.Theme.Accent; pStroke.Thickness = 1.2; pStroke.Transparency = 0.4
-
-        -- Drag bar at top of panel
-        local dragBar = Instance.new("Frame", panel)
-        dragBar.Size = UDim2.new(1, 0, 0, 22); dragBar.BackgroundColor3 = Ascended.Theme.Accent
-        dragBar.BackgroundTransparency = 0.85; dragBar.ZIndex = 21
-        Instance.new("UICorner", dragBar).CornerRadius = UDim.new(0, 8)
-        local dragLbl = Instance.new("TextLabel", dragBar)
-        dragLbl.Size = UDim2.new(1, -30, 1, 0); dragLbl.Position = UDim2.new(0, 8, 0, 0)
-        dragLbl.BackgroundTransparency = 1; dragLbl.Text = c.Name
-        dragLbl.TextColor3 = Ascended.Theme.Accent; dragLbl.Font = Enum.Font.GothamBold
-        dragLbl.TextSize = 11; dragLbl.TextXAlignment = Enum.TextXAlignment.Left; dragLbl.ZIndex = 22
-        -- Close X on the drag bar
-        local closeBtn = Instance.new("TextButton", dragBar)
-        closeBtn.Size = UDim2.new(0, 22, 1, 0); closeBtn.Position = UDim2.new(1, -22, 0, 0)
-        closeBtn.BackgroundTransparency = 1; closeBtn.Text = "×"
-        closeBtn.TextColor3 = Ascended.Theme.Accent; closeBtn.TextSize = 16; closeBtn.ZIndex = 23
-
-        -- Scrolling list inside panel
-        local maxVisibleH = 150
+        -- Inline options list (expands downward inside the scroll frame)
         local itemH = 30
-        local totalH = #c.Options * itemH
-        local listH = math.min(totalH, maxVisibleH)
-        local scroll = Instance.new("ScrollingFrame", panel)
-        scroll.Size = UDim2.new(1, -10, 0, listH)
-        scroll.Position = UDim2.new(0, 5, 0, 26)
-        scroll.BackgroundTransparency = 1
-        scroll.ScrollBarThickness = 3
-        scroll.ScrollBarImageColor3 = Ascended.Theme.Accent
-        scroll.CanvasSize = UDim2.new(0, 0, 0, totalH)
-        scroll.ZIndex = 21
-        Instance.new("UIListLayout", scroll).Padding = UDim.new(0, 4)
+        local totalH = #c.Options * (itemH + 4)
+        local listFrame = Instance.new("Frame", pg)
+        listFrame.Size = UDim2.new(1, -10, 0, totalH)
+        listFrame.BackgroundTransparency = 1
+        listFrame.Visible = false
+        Instance.new("UIListLayout", listFrame).Padding = UDim.new(0, 4)
 
         for _, o in pairs(c.Options) do
-            local opt = Instance.new("TextButton", scroll)
-            opt.Size = UDim2.new(1, 0, 0, itemH - 4)
+            local opt = Instance.new("TextButton", listFrame)
+            opt.Size = UDim2.new(1, 0, 0, itemH)
             opt.BackgroundColor3 = Color3.fromRGB(238, 238, 238)
             opt.Text = "  " .. o; opt.TextColor3 = Ascended.Theme.Text
             opt.Font = Enum.Font.Gotham; opt.TextSize = 12; opt.TextXAlignment = Enum.TextXAlignment.Left
-            opt.ZIndex = 22; Instance.new("UICorner", opt).CornerRadius = UDim.new(0, 5)
+            Instance.new("UICorner", opt).CornerRadius = UDim.new(0, 5)
             opt.MouseButton1Click:Connect(function()
-                bt.Text = "  " .. c.Name .. " : " .. o .. " ▾"
-                Tween(panel, {Size = UDim2.new(0, 170, 0, 0)}, 0.25).Completed:Connect(function() panel.Visible = false end)
-                c.Callback(o)
+                selected = o
+                Ascended.Flags[fl] = selected
+                bt.Text = "  " .. c.Name .. " : " .. o .. " â–¾"
+                listFrame.Visible = false
+                c.Callback(o); self.Lib:Save()
             end)
         end
 
-        local panelH = 26 + listH + 8  -- dragbar + list + bottom padding
-        panel.Size = UDim2.new(0, 170, 0, 0)
-
-        -- Drag logic for the panel
-        local pd, pds, psp
-        dragBar.InputBegan:Connect(function(i)
-            if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
-                pd = true; pds = i.Position; psp = panel.Position
-                i.Changed:Connect(function() if i.UserInputState == Enum.UserInputState.End then pd = false end end)
-            end
-        end)
-        UIS.InputChanged:Connect(function(i)
-            if pd and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
-                local dl = i.Position - pds
-                panel.Position = UDim2.new(psp.X.Scale, psp.X.Offset + dl.X, psp.Y.Scale, psp.Y.Offset + dl.Y)
-            end
-        end)
-
         local open = false
-        local function togglePanel()
+        bt.MouseButton1Click:Connect(function()
             open = not open
-            if open then
-                -- Position panel just below the button row
-                local absPos = fr.AbsolutePosition
-                local absSize = fr.AbsoluteSize
-                panel.Position = UDim2.new(0, absPos.X, 0, absPos.Y + absSize.Y + 4)
-                panel.Visible = true
-                panel.Size = UDim2.new(0, 170, 0, 0)
-                Tween(panel, {Size = UDim2.new(0, 170, 0, panelH)}, 0.3, Enum.EasingStyle.Back)
-            else
-                Tween(panel, {Size = UDim2.new(0, 170, 0, 0)}, 0.25).Completed:Connect(function() panel.Visible = false end)
-            end
-        end
-
-        bt.MouseButton1Click:Connect(togglePanel)
-        closeBtn.MouseButton1Click:Connect(function()
-            open = false
-            Tween(panel, {Size = UDim2.new(0, 170, 0, 0)}, 0.25).Completed:Connect(function() panel.Visible = false end)
+            listFrame.Visible = open
         end)
     end
     function f:CreateButton(n, cb)
@@ -302,10 +250,9 @@ function Ascended:CreateTab(n)
         line.BackgroundColor3 = Ascended.Theme.Accent; line.BackgroundTransparency = 0.7
         local s = Instance.new("TextLabel", wrap)
         s.Size = UDim2.new(0, 0, 1, 0); s.AutomaticSize = Enum.AutomaticSize.X
-        s.Position = UDim2.new(0, 8, 0, 0); s.BackgroundColor3 = Ascended.Theme.Main
-        s.BackgroundTransparency = 0.05; s.Text = "  " .. n:upper() .. "  "
+        s.Position = UDim2.new(0, 8, 0, 0); s.BackgroundTransparency = 1
+        s.Text = "  " .. n:upper() .. "  "
         s.TextColor3 = Ascended.Theme.Accent; s.Font = Enum.Font.GothamBold; s.TextSize = 11; s.TextXAlignment = 0
-        Instance.new("UIPadding", s).PaddingLeft = UDim.new(0, 2)
     end
 
     -- CreateLabel: plain text you can place ANYWHERE in the tab, in between any elements
@@ -323,7 +270,7 @@ function Ascended:CreateTab(n)
         lbl.TextWrapped = true
     end
 
-    -- CreateInfo: shows a live key→value display inside the tab
+    -- CreateInfo: shows a live keyâ†’value display inside the tab
     -- Usage:
     --   local info = Tab:CreateInfo({ Title = "Speed", Value = "0" })
     --   info:Set("52")   -- update the value anytime
@@ -350,7 +297,7 @@ function Ascended:CreateTab(n)
         val.Size = UDim2.new(0.45, -10, 1, 0)
         val.Position = UDim2.new(0.55, 0, 0, 0)
         val.BackgroundTransparency = 1
-        val.Text = tostring(c.Value or "—")
+        val.Text = tostring(c.Value or "â€”")
         val.TextColor3 = Ascended.Theme.Accent
         val.Font = Enum.Font.GothamBold; val.TextSize = 12
         val.TextXAlignment = Enum.TextXAlignment.Right
